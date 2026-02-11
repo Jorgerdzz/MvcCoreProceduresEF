@@ -1,0 +1,51 @@
+﻿@model List<Doctor>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<form method="post">
+    <label>Seleccione especialidad</label>
+    <select class="form-control" name="especialidad">
+        @foreach (string especialidad in ViewData["ESPECIALIDADES"] as List<string>)
+            {
+                <option>@especialidad</option>
+            }
+    </select>
+    <label>Incremento: </label>
+    <input type="number" name="incremento" class="form-control"/>
+    <button class="btn btn-success" name="accion" value="raw">Buscar por especialidad Raw</button>
+    <button class="btn btn-success" name="accion" value="procedure">Buscar por especialidad Procedure</button>
+</form>
+
+@if(Model != null)
+{
+    <table class="table table-info table-bordered">
+        <thead>
+            <tr>
+                <th>Id hospital</th>
+                <th>Apellido</th>
+                <th>Especialidad</th>
+                <th>Salario</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Doctor doctor in Model)
+            {
+                <tr>
+                    <td>@doctor.IdHospital</td>
+                    <td>@doctor.Apellido</td>
+                    <td>@doctor.Especialidad</td>
+                    <td>@doctor.Salario</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@doctor.IdDoctor">Edit</a> 
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+}
