@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Humanizer;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
@@ -7,6 +8,8 @@ using MvcCoreProceduresEF.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Diagnostics.Metrics;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace MvcCoreProceduresEF.Repositories
 {
@@ -28,10 +31,20 @@ namespace MvcCoreProceduresEF.Repositories
     //	delete from ENFERMO where INSCRIPCION = @inscripcion
     //go
 
-    //create procedure SP_INSERT_ENFERMO
+    //alter procedure SP_INSERT_ENFERMO
+    //(@apellido nvarchar(50), @direccion nvarchar(50), @fechaNacimiento DateTime, @genero nvarchar(50), @nss nvarchar(50))
+    //as
+    //    declare @inscripcion int
+    //    select @inscripcion = CAST(MAX(INSCRIPCION) AS INT) from ENFERMO;
+    //    set @inscripcion = @inscripcion + 1
+    //    insert into ENFERMO values(@inscripcion, @apellido, @direccion, @fechaNacimiento, @genero, @nss)
+    //go
+
+    //create procedure SP_UPDATE_ENFERMO
     //(@inscripcion nvarchar(50), @apellido nvarchar(50), @direccion nvarchar(50), @fechaNacimiento DateTime, @genero nvarchar(50), @nss nvarchar(50))
     //as
-    //    insert into ENFERMO values(@inscripcion, @apellido, @direccion, @fechaNacimiento, @genero, @nss)
+    //    update ENFERMO set APELLIDO = @apellido, DIRECCION = @direccion, FECHA_NAC = @fechaNacimiento,
+    //    S = @genero, NSS = @nss where INSCRIPCION = @inscripcion
     //go
     #endregion
     public class RepositoryEnfermos
@@ -118,9 +131,20 @@ namespace MvcCoreProceduresEF.Repositories
             await this.context.Database.ExecuteSqlRawAsync(sql, pamIns);
         }
 
-        public async Task CreateEnfermoAsync(string inscripcion, string apellido, string direccion, DateTime fechaNac, string genero, string nss)
+        public async Task CreateEnfermoAsync(string apellido, string direccion, DateTime fechaNac, string genero, string nss)
         {
-            string sql = "SP_INSERT_ENFERMO @inscripcion, @apellido, @direccion, @fechaNacimiento, @genero, @nss";
+            string sql = "SP_INSERT_ENFERMO @apellido, @direccion, @fechaNacimiento, @genero, @nss";
+            SqlParameter pamApe = new SqlParameter("@apellido", apellido);
+            SqlParameter pamDir = new SqlParameter("@direccion", direccion);
+            SqlParameter pamFech = new SqlParameter("@fechaNacimiento", fechaNac);
+            SqlParameter pamGen = new SqlParameter("@genero", genero);
+            SqlParameter pamNs = new SqlParameter("@nss", nss);
+            await this.context.Database.ExecuteSqlRawAsync(sql, pamApe, pamDir, pamFech, pamGen, pamNs);
+        }
+
+        public async Task UpdateEnfermo(string inscripcion, string apellido, string direccion, DateTime fechaNac, string genero, string nss)
+        {
+            string sql = "SP_UPDATE_ENFERMO @inscripcion, @apellido, @direccion, @fechaNacimiento, @genero, @nss";
             SqlParameter pamIns = new SqlParameter("@inscripcion", inscripcion);
             SqlParameter pamApe = new SqlParameter("@apellido", apellido);
             SqlParameter pamDir = new SqlParameter("@direccion", direccion);

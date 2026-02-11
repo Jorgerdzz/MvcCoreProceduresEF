@@ -38,7 +38,20 @@ namespace MvcCoreProceduresEF.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Enfermo enf)
         {
-            await this.repo.CreateEnfermoAsync(enf.Inscripcion, enf.Apellido, enf.Direccion, enf.FechaNacimiento, enf.Genero, enf.Nss);
+            await this.repo.CreateEnfermoAsync(enf.Apellido, enf.Direccion, enf.FechaNacimiento, enf.Genero, enf.Nss);
+            return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> Update(string id)
+        {
+            Enfermo enf = await this.repo.FindEnfermoAsync(id);
+            return View(enf);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Update(Enfermo enf)
+        {
+            await this.repo.UpdateEnfermo(enf.Inscripcion, enf.Apellido, enf.Direccion, enf.FechaNacimiento, enf.Genero, enf.Nss);
             return RedirectToAction("Index");
         }
 
