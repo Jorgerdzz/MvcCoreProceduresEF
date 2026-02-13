@@ -1,0 +1,67 @@
+﻿@model  TrabajadoresModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>View trabajadores</h1>
+
+<form method="post">
+    <label>Seleccione un oficio</label>
+    <select name="oficio" class="form-control">
+        @foreach (string oficio in ViewData["OFICIOS"] as List<string>)
+            {
+                <option>@oficio</option>
+            }
+     </select>
+     <button class="btn btn-success">Buscar trabajadores</button>
+</form>
+
+<ul class="list-group">
+    <li class="list-group-item">
+        Personas: @Model.Personas
+    </li>
+    <li class="list-group-item">
+        Media salarial: @Model.MediaSalarial
+    </li>
+    <li class="list-group-item">
+        Suma salarial: @Model.SumaSalarial
+    </li>
+</ul>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                APELLIDO
+            </th>
+            <th>
+                OFICIO
+            </th>
+            <th>
+                SALARIO
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Trabajadores) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Apellido)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Oficio)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Salario)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.IdTrabajador">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.IdTrabajador">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.IdTrabajador">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
